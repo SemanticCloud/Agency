@@ -1,4 +1,4 @@
-package org.semanticcloud.agency.agents;
+package org.semanticcloud.agency.core;
 
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -8,7 +8,7 @@ import jade.domain.FIPAException;
 
 public abstract class BaseAgent extends Agent {
 
-    protected void registerAgent(String serviceType)
+    protected void registerAgent(String serviceType) throws FIPAException
     {
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(getAID());
@@ -16,13 +16,10 @@ public abstract class BaseAgent extends Agent {
         sd.setType(serviceType);
         sd.setName(getLocalName());
         dfd.addServices(sd);
-        try
-        {
-            DFService.register(this, dfd);
-        }
-        catch (FIPAException fe)
-        {
-            fe.printStackTrace();
-        }
+        DFService.register(this, dfd);
+    }
+
+    protected void deregisterAgent() throws FIPAException {
+        DFService.deregister(this);
     }
 }

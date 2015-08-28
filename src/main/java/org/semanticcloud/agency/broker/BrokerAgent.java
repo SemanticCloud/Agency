@@ -1,30 +1,34 @@
-package org.semanticcloud.agency.agents;
+package org.semanticcloud.agency.broker;
 
 import jade.core.AID;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
+import org.semanticcloud.agency.core.BaseAgent;
 
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.Vector;
 
 public class BrokerAgent extends BaseAgent {
-    private int nResponders;
 
     @Override
     protected void setup() {
-        registerAgent("broker");
+        try {
+            registerAgent("broker");
+        } catch (FIPAException e) {
+            e.printStackTrace();
+        }
 
         List<AID> providers = findProviders();
         if (providers.size() != 0) {
-            nResponders = providers.size();
-            System.out.println("Trying to delegate dummy-action to one out of " + nResponders + " responders.");
 
             // Fill the CFP message
             ACLMessage msg = new ACLMessage(ACLMessage.CFP);
@@ -35,6 +39,7 @@ public class BrokerAgent extends BaseAgent {
             // We want to receive a reply in 10 secs
             msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
             msg.setContent("dummy-action");
+            msg.setConversationId(UUID.randomUUID().toString());
 
             addBehaviour(new ContractNetInitiator(this, msg) {
 
@@ -54,15 +59,10 @@ public class BrokerAgent extends BaseAgent {
                     } else {
                         System.out.println("Agent " + failure.getSender().getName() + " failed");
                     }
-                    // Immediate failure --> we will not receive a response from this agent
-                    nResponders--;
                 }
 
                 protected void handleAllResponses(Vector responses, Vector acceptances) {
-                    if (responses.size() < nResponders) {
-                        // Some responder didn't reply within the specified timeout
-                        System.out.println("Timeout expired: missing " + (nResponders - responses.size()) + " responses");
-                    }
+
                     // Evaluate proposals.
                     int bestProposal = -1;
                     AID bestProposer = null;
@@ -96,6 +96,10 @@ public class BrokerAgent extends BaseAgent {
         } else {
             System.out.println("No responder specified.");
         }
+    }
+
+    private void selectBestOffer(){
+
     }
 
 

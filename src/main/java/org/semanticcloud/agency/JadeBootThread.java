@@ -11,7 +11,7 @@ public class JadeBootThread extends Thread {
 
     //add the <agent-local-name>:<fully-qualified-agent-class> name here;
 // you can add more than one by semicolon separated values.
-    private final String ACTOR_NAMES_args = "Agent2:org.semanticcloud.agency.agents.ProviderAgent;Agent3:org.semanticcloud.agency.agents.ProviderAgent;Agent1:org.semanticcloud.agency.agents.BrokerAgent";
+    private final String ACTOR_NAMES_args = "Agent2:org.semanticcloud.agency.provider.ProviderAgent;Agent3:org.semanticcloud.agency.provider.ProviderAgent;Agent1:org.semanticcloud.agency.broker.BrokerAgent;Agent12:org.semanticcloud.agency.broker.BrokerAgent";
 
     private final String GUI_args = "-gui";
 
